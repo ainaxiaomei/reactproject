@@ -7,6 +7,7 @@ export default function({ history }) {
     <Router history={history}>
       <Route path="/" component={IpRangeRouter} />
       <Route path="/users" component={Users} />
+      <Route path="/ipRange" component={IpRangeRouter} />
     </Router>
   );
 };

@@ -10,8 +10,7 @@ function IpList({
   const columns = [{
     title: 'IP_Begin',
     dataIndex: 'ipBegin',
-    key: 'ipBegin',
-    render: (text) => <a href="#">{text}</a>,
+    key: 'ipBegin'
   }, {
     title: 'IP_End',
     dataIndex: 'ipEnd',
