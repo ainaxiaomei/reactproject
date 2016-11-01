@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import styles from './IndexPage.less';
+import styles from './Users.less';
 import MainLayout from '../components/MainLayout'
-import { routerRedux } from 'dva/router';
 import UserList from '../components/Users/UserList';
 import UserSearch from '../components/Users/UserSearch';
 import UserModal from '../components/Users/UserModal';
@@ -104,7 +103,8 @@ Users.propTypes = {
 };
 
 function mapStateToProps({ users }) {
+  console.log({ users });
   return { users };
 }
 
-export default connect()(Users);
+export default connect(mapStateToProps)(Users);
