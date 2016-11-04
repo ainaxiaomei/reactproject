@@ -21,7 +21,7 @@ export default {
         if (location.pathname === '/ipRange') {
           dispatch({
             type: 'query',
-            payload: location.query,
+            payload: {},
           });
         }
       });
@@ -32,7 +32,9 @@ export default {
   effects:{
     *query({ payload }, { select, call, put }) {
        yield put({ type: 'showLoading' });
-      const {data} = yield call(query);
+       //清空数据
+       yield put({type: 'clearList'});
+      const {data} = yield call(query,payload);
        if (data) {
          yield put({
            type: 'querySuccess',
@@ -60,7 +62,6 @@ export default {
 
 reducers:{
   querySuccess(state,action){
-      console.log(action);
       return {...state, list:action.payload, loading: false};
   },
   deleteSuccess(state,action){
@@ -90,6 +91,9 @@ reducers:{
   hideLoadind(state){
     return {...state,loading:false}
   },
+  clearList(state){
+      return {...state,list:[]}
+  }
 }
 
 };

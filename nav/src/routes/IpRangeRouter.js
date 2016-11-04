@@ -50,9 +50,19 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
       <IpListModal {...ipListModalProps}/>
    );
  }
+
+ const IpSearchProps = {
+  query : function(data) {
+    console.log(data);
+    dispatch({
+      type:'ipRange/query',
+      payload:data
+    });
+   },
+ }
   return(
     <MainLayout>
-    <IpSearch />
+    <IpSearch {...IpSearchProps}/>
     <IpList {...ipListProps}></IpList>
     <IpListModalGen />
     </MainLayout>

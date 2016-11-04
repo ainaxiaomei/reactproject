@@ -18,8 +18,8 @@ const IpSearch = Form.create()(React.createClass({
       if (err) {
         return;
       }
-
-      console.log('Received values of form: ', values);
+      const data = { ...this.props.form.getFieldsValue() };
+      this.props.query(data);
     });
   },
   handleReset() {
@@ -35,8 +35,8 @@ const IpSearch = Form.create()(React.createClass({
       wrapperCol: { span: 19 },
     };
 
-    const fieldName = ['IP_Begin','IP_End','Contonent','Country','Province','Isp'];
-
+    const fieldNameLabel = ['IP_Begin','IP_End','Contonent','Country','Province','Isp'];
+    const fieldName = ['begin_ip','end_ip','continent','country','province','isp'];
     // To generate mock Form.Item
     const children = [];
     for (let i = 0; i < 6; i++) {
@@ -44,7 +44,7 @@ const IpSearch = Form.create()(React.createClass({
         <Col span={8} key={i}>
           <FormItem
             {...formItemLayout}
-            label={fieldName[i]}
+            label={fieldNameLabel[i]}
           >
             {getFieldDecorator(fieldName[i])(
               <Input placeholder="placeholder" />
