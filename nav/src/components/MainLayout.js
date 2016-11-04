@@ -56,12 +56,12 @@ const MainLayout = React.createClass({
                   <Breadcrumb>
                     <Breadcrumb.Item>首页</Breadcrumb.Item>
                     <Breadcrumb.Item>应用列表</Breadcrumb.Item>
-                    <Breadcrumb.Item>某应用</Breadcrumb.Item>
+                    <Breadcrumb.Item>Ip库</Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
                 <div className="ant-layout-container">
                   <div className="ant-layout-content">
-                    <div style={{ height: 220 }}>
+                    <div >
                        <div>
                           <div >
                             {this.props.children}

@@ -1,10 +1,4 @@
-'use strict';
-
-const mock = {};
-
-require('fs').readdirSync(require('path').join(__dirname + '/mock'))
-  .forEach(function (file) {
-    Object.assign(mock, require('./mock/' + file));
-  });
-
-module.exports = mock;
+var mockjs = require('mockjs');
+module.exports = {
+  '/iplibrary/*': 'http://127.0.0.1:8082',
+};

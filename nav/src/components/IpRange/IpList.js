@@ -1,20 +1,20 @@
 import React, { PropTypes } from 'react';
-import { Table, Popconfirm, Pagination } from 'antd';
+import { Icon,Upload,Table, Popconfirm, Pagination,Button } from 'antd';
 
 function IpList({
   total, current, loading, dataSource,
   onPageChange,
   onDeleteItem,
-  onEditItem,
+  onAddClick
   }) {
   const columns = [{
     title: 'IP_Begin',
-    dataIndex: 'ipBegin',
-    key: 'ipBegin'
+    dataIndex: 'ipBeginStr',
+    key: 'ipBeginStr'
   }, {
     title: 'IP_End',
-    dataIndex: 'ipEnd',
-    key: 'ipEnd',
+    dataIndex: 'ipEndStr',
+    key: 'ipEndStr',
   }, {
     title: 'Continent',
     dataIndex: 'continent',
@@ -36,9 +36,7 @@ function IpList({
     key: 'operation',
     render: (text, record) => (
       <p>
-        <a onClick={() => onEditItem(record)}>编辑</a>
-        &nbsp;
-        <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteItem(record.id)}>
+        <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteItem(record)}>
           <a>删除</a>
         </Popconfirm>
       </p>
@@ -53,6 +51,7 @@ function IpList({
         loading={loading}
         pagination={false}
       />
+      <div>
       <Pagination
         className="ant-table-pagination"
         total={total}
@@ -60,6 +59,14 @@ function IpList({
         pageSize={10}
         onChange={onPageChange}
       />
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={onAddClick}>Add</Button>&nbsp;&nbsp;
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" >Sync</Button>&nbsp;&nbsp;
+    <Upload >
+      <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
+        <Icon type="upload" /> Import
+      </Button>
+    </Upload>
+    </div>
     </div>
   );
 }
@@ -67,7 +74,7 @@ function IpList({
 IpList.propTypes = {
   onPageChange: PropTypes.func,
   onDeleteItem: PropTypes.func,
-  onEditItem: PropTypes.func,
+  onAddClick: PropTypes.func,
   dataSource: PropTypes.array,
   loading: PropTypes.any,
   total: PropTypes.any,

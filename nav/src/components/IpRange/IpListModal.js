@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import { Form, Input, Modal } from 'antd';
+import {isIP} from '../../services/commomService.js'
 const FormItem = Form.Item;
 
 const formItemLayout = {
@@ -32,16 +33,18 @@ const IpListModal = ({
     });
   }
 
-  function checkNumber(rule, value, callback) {
-    if (!/^[\d]{1,2}$/.test(value)) {
-      callback(new Error('年龄不合法'));
+  function checkIp(rule, value, callback) {
+    if (!isIP(value)) {
+      callback(new Error('IP地址不合法'));
     } else {
       callback();
     }
   }
 
+
+
   const modalOpts = {
-    title: '修改用户',
+    title: 'IP库信息',
     visible,
     onOk: handleOk,
     onCancel,
@@ -51,46 +54,87 @@ const IpListModal = ({
     <Modal {...modalOpts}>
       <Form horizontal>
         <FormItem
-          label="姓名："
+          label="IP_Begin"
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('name', {
-            initialValue: item.name,
+          {getFieldDecorator('ipBegin', {
+            initialValue: item.ipBegin,
             rules: [
-              { required: true, message: '名称未填写' },
+              { validator: checkIp },
             ],
           })(
             <Input type="text" />
           )}
         </FormItem>
         <FormItem
-          label="年龄："
+          label="IP_End"
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('age', {
-            initialValue: item.age,
+          {getFieldDecorator('ipEnd', {
+            initialValue: item.ipEnd,
             rules: [
-              { required: true, message: '年龄未填写' },
-              { validator: checkNumber },
+              { validator: checkIp },
             ],
           })(
             <Input type="text" />
           )}
         </FormItem>
         <FormItem
-          label="住址："
+          label="Continent："
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('address', {
-            initialValue: item.address,
+          {getFieldDecorator('continent', {
+            initialValue: item.continent,
             rules: [
-              { required: true, message: '不能为空' },
+              { required: true, message: 'Continent不能为空' },
             ],
           })(
-            <Input type="address" />
+            <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          label="Country"
+          hasFeedback
+          {...formItemLayout}
+        >
+          {getFieldDecorator('country', {
+            initialValue: item.country,
+            rules: [
+              { required: true, message: 'Country不能为空' },
+            ],
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          label="Province"
+          hasFeedback
+          {...formItemLayout}
+        >
+          {getFieldDecorator('province', {
+            initialValue: item.province,
+            rules: [
+              { required: true, message: 'Province不能为空' },
+            ],
+          })(
+            <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          label="Isp"
+          hasFeedback
+          {...formItemLayout}
+        >
+          {getFieldDecorator('isp', {
+            initialValue: item.continent,
+            rules: [
+              { required: true, message: 'Isp不能为空' },
+            ],
+          })(
+            <Input type="text" />
           )}
         </FormItem>
       </Form>
