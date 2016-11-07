@@ -65,6 +65,7 @@ function IpList({
       <Pagination
         className="ant-table-pagination"
         total={total}
+        showTotal={total => `Total ${total}`}
         current={current}
         pageSize={10}
         onChange={onPageChange}

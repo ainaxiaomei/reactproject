@@ -20,7 +20,6 @@ export async function del({ipBeginStr,ipEndStr}){
 
 export async function add(data){
   let json = JSON.stringify(data)
-  console.log(json);
   return request('/iplibrary/iprange/addip',
    {
     method: 'put',

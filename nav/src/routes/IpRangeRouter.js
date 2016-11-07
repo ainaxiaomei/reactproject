@@ -14,6 +14,20 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
     loading:loading,
     total:total,
     current:current,
+    onPageChange(page) {
+      dispatch({
+        type:'ipRange/setCurrentPage',
+        payload:{
+          'page':page
+        }
+      }),
+      dispatch({
+        type:'ipRange/query',
+        payload:{
+          'page':page
+        }
+      });
+    },
     onAddClick:function(){
     dispatch({
       type:"ipRange/showModal",
@@ -53,7 +67,6 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
 
  const IpSearchProps = {
   query : function(data) {
-    console.log(data);
     dispatch({
       type:'ipRange/query',
       payload:data

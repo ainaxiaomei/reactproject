@@ -8,7 +8,7 @@ export default {
   state: {
     list: [],
     loading: false,
-    total: 8,
+    total: 0,
     current: 1,
     currentItem: {},
     modalVisible: false,
@@ -61,7 +61,7 @@ export default {
 
 reducers:{
   querySuccess(state,action){
-       return {...state, list:action.payload, loading: false};
+       return {...state, list:action.payload.data, loading: false,total:action.payload.count};
   },
   deleteSuccess(state,action){
     const newList = state.list.filter((item)=>{
@@ -74,23 +74,30 @@ reducers:{
     state.list.push(newIpRange);
     return {...state,list:state.list.slice(0,10),total:state.total+1};
   },
-  showLoading(state) {
-    return { ...state, loading: true };
-  },
-
+  //显示新增对话框
   showModal(state,action){
     return {...state,modalVisible:true};
   },
-
+  //隐藏新增对话框
   hideModal(state) {
     //清空currentItem
     return { ...state,currentItem:{},modalVisible: false };
   },
+  //隐藏加载动画效果
   hideLoadind(state){
     return {...state,loading:false}
   },
+  //显示加载效果
+  showLoading(state) {
+    return { ...state, loading: true };
+  },
+  //清空列表
   clearList(state){
       return {...state,list:[]}
+  },
+  //设置当前的页数
+  setCurrentPage(state,action){
+    return {...state,current:action.payload.page}
   }
 }
 
