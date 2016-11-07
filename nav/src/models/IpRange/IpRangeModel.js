@@ -1,5 +1,6 @@
 import request from '../../utils/request';
 import {query,del,add} from '../../services/ipRangeService.js'
+import {queryIsp} from '../../services/ispService.js'
 
 export default {
 
@@ -13,14 +14,22 @@ export default {
     currentItem: {},
     modalVisible: false,
     modalType: 'create',
+    isp:[]
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen(location => {
         if (location.pathname === '/ipRange') {
+          //刷新表格
           dispatch({
             type: 'query',
+            payload: {},
+          });
+
+          //查询ips静态数据
+          dispatch({
+            type: 'queryIsps',
             payload: {},
           });
         }
@@ -44,6 +53,14 @@ export default {
           yield put({ type: 'hideLoadind' });
        }
      },
+     *queryIsps({ payload }, { select, call, put }){
+       const data = yield call(queryIsp);
+       yield put({
+         type: 'queryIspSuccess',
+         payload: data.data
+        });
+     },
+
      *delete({ payload }, { select, call, put }){
       yield call(del,payload.record)
       yield put({
@@ -73,6 +90,9 @@ reducers:{
     const newIpRange = action.payload;
     state.list.push(newIpRange);
     return {...state,list:state.list.slice(0,10),total:state.total+1};
+  },
+  queryIspSuccess(state,action){
+     return {...state,isp:action.payload.data};
   },
   //显示新增对话框
   showModal(state,action){
