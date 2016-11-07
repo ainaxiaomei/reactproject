@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Icon,Upload,Table, Popconfirm, Pagination,Button } from 'antd';
+import { Icon,Upload,Table, Popconfirm, Pagination,Button,message} from 'antd';
 
 function IpList({
   total, current, loading, dataSource,
@@ -43,6 +43,16 @@ function IpList({
     ),
   }];
 
+ function uploadOnChange(info){
+   if (info.file.status !== 'uploading') {
+      console.log('uploading...');
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+ }
   return (
     <div>
       <Table
@@ -61,7 +71,7 @@ function IpList({
       />
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={onAddClick}>Add</Button>&nbsp;&nbsp;
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" >Sync</Button>&nbsp;&nbsp;
-    <Upload >
+    <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv'>
       <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
         <Icon type="upload" /> Import
       </Button>

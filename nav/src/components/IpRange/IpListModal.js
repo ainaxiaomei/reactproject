@@ -58,7 +58,7 @@ const IpListModal = ({
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('ipBegin', {
+          {getFieldDecorator('ipBeginStr', {
             initialValue: item.ipBegin,
             rules: [
               { validator: checkIp },
@@ -72,7 +72,7 @@ const IpListModal = ({
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('ipEnd', {
+          {getFieldDecorator('ipEndStr', {
             initialValue: item.ipEnd,
             rules: [
               { validator: checkIp },

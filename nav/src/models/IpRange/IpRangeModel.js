@@ -1,5 +1,5 @@
 import request from '../../utils/request';
-import {query,del} from '../../services/ipRangeService.js'
+import {query,del,add} from '../../services/ipRangeService.js'
 
 export default {
 
@@ -53,16 +53,15 @@ export default {
      },
      *create({ payload }, { call, put }) {
        yield put({ type: 'hideModal' });
-       yield put({
-         type:'createSuccess',
-         payload:payload
-       });
+       yield call(add,payload);
+       //刷新表格
+       yield put({type:'query'});
      },
   },
 
 reducers:{
   querySuccess(state,action){
-      return {...state, list:action.payload, loading: false};
+       return {...state, list:action.payload, loading: false};
   },
   deleteSuccess(state,action){
     const newList = state.list.filter((item)=>{
@@ -85,7 +84,6 @@ reducers:{
 
   hideModal(state) {
     //清空currentItem
-    console.log("1234");
     return { ...state,currentItem:{},modalVisible: false };
   },
   hideLoadind(state){
