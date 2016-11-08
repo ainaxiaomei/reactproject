@@ -23,7 +23,8 @@ const IpListModal = ({
     validateFields,
     getFieldsValue,
     },
-    isps
+    isps,
+    regions
   }) => {
   function handleOk() {
     validateFields((errors) => {
@@ -57,29 +58,6 @@ const IpListModal = ({
     onCancel,
   };
 
-  const options = [{
-  value: 'AS',
-  label: '亚洲',
-  children: [{
-    value: 'CN',
-    label: '中国',
-    children: [{
-      value: 'SH',
-      label: '上海',
-    }],
-  }],
-}, {
-  value: 'NA',
-  label: '北美洲',
-  children: [{
-    value: 'US',
-    label: '美国',
-    children: [{
-      value: 'HS',
-      label: '华盛顿洲',
-    }],
-  }],
-}];
 
 //Option key或者vlue相同会报错，不能直接把abbreviation赋值给key或者value
 const Option = Select.Option;
@@ -130,7 +108,7 @@ function handleSelect(value,options){
           {getFieldDecorator('geo', {
             initialValue: item.continent,
           })(
-            <Cascader   options={options} changeOnSelect  />
+            <Cascader   options={regions} changeOnSelect  />
           )}
         </FormItem>
         <FormItem

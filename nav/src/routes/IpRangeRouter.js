@@ -7,7 +7,7 @@ import IpListModal from '../components/IpRange/IpListModal';
 import IpSearch from '../components/IpRange/IpSearch';
 const IpRangeRouter = ({ipRange,dispatch})=>{
 
-  const {list,loading,total,current,modalVisible,currentItem,isp} = ipRange;
+  const {list,loading,total,current,modalVisible,currentItem,isp,regions} = ipRange;
 
   const ipListProps = {
     dataSource: list,
@@ -48,6 +48,7 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
     visible :modalVisible,
     item :currentItem,
     isps:isp,
+    regions:regions,
     onOk:function(data){
       //处理GEO转化为洲国省
       data = {...data,"continent":data.geo[0],"country":data.geo[1],"province":data.geo[2]}

@@ -11,6 +11,12 @@ export async function query(data){
 
 }
 
+export async function queryRegion(){
+  const url = '/iplibrary/region/getAll'
+  return request(url);
+
+}
+
 export async function del({ipBeginStr,ipEndStr}){
   return request('/iplibrary/iprange/deleteip?' + qs.stringify({ipBeginStr,ipEndStr}) ,
    {

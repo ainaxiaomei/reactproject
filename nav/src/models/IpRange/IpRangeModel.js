@@ -1,5 +1,5 @@
 import request from '../../utils/request';
-import {query,del,add} from '../../services/ipRangeService.js'
+import {query,del,add,queryRegion} from '../../services/ipRangeService.js'
 import {queryIsp} from '../../services/ispService.js'
 
 export default {
@@ -14,7 +14,8 @@ export default {
     currentItem: {},
     modalVisible: false,
     modalType: 'create',
-    isp:[]
+    isp:[],
+    regions:[]
   },
 
   subscriptions: {
@@ -30,6 +31,12 @@ export default {
           //查询ips静态数据
           dispatch({
             type: 'queryIsps',
+            payload: {},
+          });
+
+          //查询区域
+          dispatch({
+            type: 'queryRegions',
             payload: {},
           });
         }
@@ -53,6 +60,13 @@ export default {
           yield put({ type: 'hideLoadind' });
        }
      },
+     *queryRegions({ payload }, { select, call, put }){
+      const data =  yield call(queryRegion);
+      yield  put({
+        type:'queryregionSuccess',
+        payload:data
+      });
+    },
      *queryIsps({ payload }, { select, call, put }){
        const data = yield call(queryIsp);
        yield put({
@@ -93,6 +107,9 @@ reducers:{
   },
   queryIspSuccess(state,action){
      return {...state,isp:action.payload.data};
+  },
+  queryregionSuccess(state,action){
+     return {...state,regions:action.payload.data};
   },
   //显示新增对话框
   showModal(state,action){
