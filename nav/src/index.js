@@ -11,6 +11,7 @@ const app = dva();
 // 3. Model
 app.model(require('./models/users'));
 app.model(require('./models/IpRange/IpRangeModel'));
+app.model(require('./models/LocationRecord/LocationRecordModel'));
 
 // 4. Router
 app.router(require('./router'));

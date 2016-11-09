@@ -12,8 +12,7 @@ const formItemLayout = {
   },
 };
 
-const IpListModal = ({
-
+const LocationRecordModal = ({
   visible,
   item = {},
   onOk,
@@ -52,7 +51,7 @@ const IpListModal = ({
 
 
   const modalOpts = {
-    title: 'IP库信息',
+    title: '调度信息',
     visible,
     onOk: handleOk,
     onCancel,
@@ -62,9 +61,11 @@ const IpListModal = ({
 //Option key或者vlue相同会报错，不能直接把abbreviation赋值给key或者value
 const Option = Select.Option;
 const children = [];
-for (let i = 0; i < isps.length; i++) {
-children.push(<Option key={isps[i].code}>{isps[i].chineseName}</Option>);
-//console.log(isp[i].abbreviation);
+if(isps){
+  for (let i = 0; i < isps.length; i++) {
+      children.push(<Option key={isps[i].code}>{isps[i].chineseName}</Option>);
+  //console.log(isp[i].abbreviation);
+  }
 }
 
 function handleSelect(value,options){
@@ -73,11 +74,11 @@ function handleSelect(value,options){
     <Modal {...modalOpts}>
       <Form horizontal>
         <FormItem
-          label="IP_Begin"
+          label="Domain"
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('ipBeginStr', {
+          {getFieldDecorator('domain', {
             initialValue: item.ipBegin,
             rules: [
               { validator: checkIp },
@@ -87,11 +88,25 @@ function handleSelect(value,options){
           )}
         </FormItem>
         <FormItem
-          label="IP_End"
+          label="IP"
           hasFeedback
           {...formItemLayout}
         >
-          {getFieldDecorator('ipEndStr', {
+          {getFieldDecorator('ipList', {
+            initialValue: "",
+            rules: [
+              { required: true, message: 'IP地址不能为空' },
+            ],
+          })(
+              <Input type="text" />
+          )}
+        </FormItem>
+        <FormItem
+          label="Type"
+          hasFeedback
+          {...formItemLayout}
+        >
+          {getFieldDecorator('type', {
             initialValue: item.ipEnd,
             rules: [
               { validator: checkIp },
@@ -130,7 +145,7 @@ function handleSelect(value,options){
   );
 };
 
-IpListModal.propTypes = {
+LocationRecordModal.propTypes = {
   visible: PropTypes.any,
   form: PropTypes.object,
   item: PropTypes.object,
@@ -138,4 +153,4 @@ IpListModal.propTypes = {
   onCancel: PropTypes.func,
 };
 
-export default Form.create()(IpListModal);
+export default Form.create()(LocationRecordModal);

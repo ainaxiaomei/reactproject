@@ -29,12 +29,12 @@ const MainLayout = React.createClass({
             <div className={collapse ? "ant-layout-aside ant-layout-aside-collapse" : "ant-layout-aside"}>
               <aside className="ant-layout-sider">
                 <div className="ant-layout-logo"></div>
-                <Menu mode="inline" theme="dark" defaultSelectedKeys={['user']}>
-                  <Menu.Item key="user">
-                    <Icon type="user" /><span className="nav-text">IP 库管理</span>
+                <Menu mode="inline" theme="dark" defaultSelectedKeys={this.props.DefaultSelect}>
+                  <Menu.Item key="IpRange">
+                    <Icon type="user" /><a className="nav-text" href="/#/ipRange">IP 信息管理</a>
                   </Menu.Item>
-                  <Menu.Item key="setting">
-                    <Icon type="setting" /><span className="nav-text">调度信息管理</span>
+                  <Menu.Item key="locationRecord">
+                    <Icon type="laptop" /><a className="nav-text" href="/#/location">调度信息管理</a>
                   </Menu.Item>
                   <Menu.Item key="laptop">
                     <Icon type="laptop" /><span className="nav-text">导航三</span>
@@ -56,7 +56,7 @@ const MainLayout = React.createClass({
                   <Breadcrumb>
                     <Breadcrumb.Item>首页</Breadcrumb.Item>
                     <Breadcrumb.Item>应用列表</Breadcrumb.Item>
-                    <Breadcrumb.Item>Ip库</Breadcrumb.Item>
+                    <Breadcrumb.Item>{this.props.appName}</Breadcrumb.Item>
                   </Breadcrumb>
                 </div>
                 <div className="ant-layout-container">

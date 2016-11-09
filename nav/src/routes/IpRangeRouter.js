@@ -78,8 +78,9 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
     });
    },
  }
+
   return(
-    <MainLayout>
+    <MainLayout DefaultSelect={["IpRange"]} appName="IP 管理">
     <IpSearch {...IpSearchProps}/>
     <IpList {...ipListProps}></IpList>
     <IpListModalGen />
