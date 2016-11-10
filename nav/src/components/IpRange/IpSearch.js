@@ -1,4 +1,4 @@
-import { Form, Row, Col, Input, Button, Icon } from 'antd';
+import { Form, Row, Col, Input, Button, Icon,Select } from 'antd';
 import React, { PropTypes } from 'react';
 import {isIP} from '../../services/commomService.js'
 import './IpSerach.less'
@@ -19,11 +19,33 @@ const IpSearch = Form.create()(React.createClass({
         return;
       }
       const data = { ...this.props.form.getFieldsValue() };
-      this.props.query(data);
+      //将ips的code转化为abbreviation
+      const obj = this.props.isps.filter((item)=>{
+        return item.code == data.isp;
+      });
+      if(obj && obj.length > 0){
+        const newData = {...data,isp:obj[0].abbreviation};
+          this.props.query(newData);
+      }else{
+          this.props.query(data);
+      }
+
+
+
     });
   },
   handleReset() {
     this.props.form.resetFields();
+  },
+  handleContinentChange(value){
+    this.props.changeCountryList(value);
+    //清空国家和省份
+    this.props.form.resetFields(["country","province"]);
+  },
+  handleCountryChange(value){
+    this.props.changeProvinceList(value);
+    //清空省份
+    this.props.form.resetFields(["province"]);
   },
   toggle(expand) {
     this.setState({ expand });
@@ -35,27 +57,96 @@ const IpSearch = Form.create()(React.createClass({
       wrapperCol: { span: 19 },
     };
 
-    const fieldNameLabel = ['IP_Begin','IP_End','Contonent','Country','Province','Isp'];
-    const fieldName = ['begin_ip','end_ip','continent','country','province','isp'];
-    // To generate mock Form.Item
-    const children = [];
-    for (let i = 0; i < 6; i++) {
-      children.push(
-        <Col span={8} key={i}>
-          <FormItem
-            {...formItemLayout}
-            label={fieldNameLabel[i]}
-          >
-            {getFieldDecorator(fieldName[i])(
-              <Input placeholder="placeholder" />
-            )}
-          </FormItem>
-        </Col>
-      );
+    const Option = Select.Option;
+    const ispOption = [];
+    for (let i = 0; i < this.props.isps.length; i++) {
+    ispOption.push(<Option key={this.props.isps[i].code}>{this.props.isps[i].chineseName}</Option>);
+    //console.log(isp[i].abbreviation);
     }
 
+    const contonentOptions = [];
+    for (let i = 0; i < this.props.regions.length; i++) {
+    contonentOptions.push(<Option key={this.props.regions[i].value}>{this.props.regions[i].label}</Option>);
+    //console.log(isp[i].abbreviation);
+    }
+
+    const countryOption = [];
+    for (let i = 0; i < this.props.ipListSearch.country.length; i++) {
+    countryOption.push(<Option key={this.props.ipListSearch.country[i].value}>{this.props.ipListSearch.country[i].label}</Option>);
+    //console.log(isp[i].abbreviation);
+    }
+
+    const provinceOption = [];
+    for (let i = 0; i < this.props.ipListSearch.province.length; i++) {
+    provinceOption.push(<Option key={this.props.ipListSearch.province[i].value}>{this.props.ipListSearch.province[i].label}</Option>);
+    //console.log(isp[i].abbreviation);
+    }
+
+    const formItems= [
+      <Col span={8} key='begin_ip'>
+        <FormItem
+          {...formItemLayout}
+          label={'IP_Begin'}
+        >
+          {getFieldDecorator('begin_ip')(
+            <Input placeholder="placeholder" />
+          )}
+        </FormItem>
+      </Col>,
+      <Col span={8} key='end_ip'>
+        <FormItem
+          {...formItemLayout}
+          label={'IP_End'}
+        >
+          {getFieldDecorator('end_ip')(
+            <Input placeholder="placeholder" />
+          )}
+        </FormItem>
+      </Col>,
+      <Col span={8} key='continent'>
+        <FormItem
+          {...formItemLayout}
+          label={'Continent'}
+        >
+          {getFieldDecorator('continent')(
+            <Select onChange={this.handleContinentChange}>{contonentOptions}</Select>
+          )}
+        </FormItem>
+      </Col>,
+      <Col span={8} key='country'>
+        <FormItem
+          {...formItemLayout}
+          label={'Country'}
+        >
+          {getFieldDecorator('country')(
+            <Select onChange={this.handleCountryChange}>{countryOption}</Select>
+          )}
+        </FormItem>
+      </Col>,
+      <Col span={8} key='province'>
+        <FormItem
+          {...formItemLayout}
+          label={'Province'}
+        >
+          {getFieldDecorator('province')(
+              <Select >{provinceOption}</Select>
+          )}
+        </FormItem>
+      </Col>,
+      <Col span={8} key='isp'>
+        <FormItem
+          {...formItemLayout}
+          label={'ISP'}
+        >
+          {getFieldDecorator('isp')(
+            <Select >{ispOption}</Select>
+          )}
+        </FormItem>
+      </Col>
+
+    ]
     const expand = this.state.expand;
-    const showedChildren = expand ? children.length : usualShowedChildren;
+    const showedChildren = expand ? formItems.length : usualShowedChildren;
     return (
       <Form
         horizontal
@@ -63,7 +154,7 @@ const IpSearch = Form.create()(React.createClass({
         onSubmit={this.handleSearch}
       >
         <Row gutter={40}>
-          {children.slice(0, showedChildren)}
+          {formItems.slice(0, showedChildren)}
         </Row>
         <Row>
           <Col span={24} style={{ textAlign: 'right' }}>

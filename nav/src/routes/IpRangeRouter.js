@@ -7,7 +7,7 @@ import IpListModal from '../components/IpRange/IpListModal';
 import IpSearch from '../components/IpRange/IpSearch';
 const IpRangeRouter = ({ipRange,dispatch})=>{
 
-  const {list,loading,total,current,modalVisible,currentItem,isp,regions} = ipRange;
+  const {list,loading,total,current,modalVisible,currentItem,isp,regions,ipListSearch} = ipRange;
 
   const ipListProps = {
     dataSource: list,
@@ -77,6 +77,22 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
       payload:data
     });
    },
+   changeCountryList:function(value){
+     dispatch({
+       type:'ipRange/changeCountry',
+       payload:value
+     });
+   },
+   changeProvinceList:function(value){
+     dispatch({
+       type:'ipRange/changeProvince',
+       payload:value
+     });
+   },
+   isps:isp,
+   regions:regions,
+   ipListSearch:ipListSearch
+
  }
 
   return(

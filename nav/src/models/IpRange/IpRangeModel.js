@@ -15,7 +15,12 @@ export default {
     modalVisible: false,
     modalType: 'create',
     isp:[],
-    regions:[]
+    regions:[],
+    ipListSearch:{
+      continent:[],
+      country:[],
+      province:[],
+    }
   },
 
   subscriptions: {
@@ -135,6 +140,26 @@ reducers:{
   //设置当前的页数
   setCurrentPage(state,action){
     return {...state,current:action.payload.page}
+  },
+  changeCountry(state,action){
+    const data = state.regions.filter((item)=>{
+      return (item.value == action.payload);
+    });
+    var countryList = data[0].children;
+    if(!countryList){
+      countryList=[];
+    }
+    return {...state,ipListSearch:{...state.ipListSearch,country:countryList,province:[]}};
+  },
+  changeProvince(state,action){
+   const data =  state.ipListSearch.country.filter((item)=>{
+        return (item.value == action.payload);
+    });
+    var provinceList = data[0].children;
+    if(!provinceList){
+      provinceList=[];
+    }
+     return {...state,ipListSearch:{...state.ipListSearch,province:provinceList}};
   }
 }
 
