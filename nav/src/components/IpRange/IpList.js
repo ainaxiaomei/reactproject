@@ -5,7 +5,8 @@ function IpList({
   total, current, loading, dataSource,
   onPageChange,
   onDeleteItem,
-  onAddClick
+  onAddClick,
+  onSyncClick,
   }) {
   const columns = [{
     title: 'IP_Begin',
@@ -71,7 +72,7 @@ function IpList({
         onChange={onPageChange}
       />
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={onAddClick}>Add</Button>&nbsp;&nbsp;
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" >Sync</Button>&nbsp;&nbsp;
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={onSyncClick}>Sync</Button>&nbsp;&nbsp;
     <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv'>
       <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
         <Icon type="upload" /> Import

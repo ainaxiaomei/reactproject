@@ -5,9 +5,11 @@ import MainLayout from '../components/MainLayout';
 import IpList from '../components/IpRange/IpList';
 import IpListModal from '../components/IpRange/IpListModal';
 import IpSearch from '../components/IpRange/IpSearch';
+import DNSListModal from '../components/commom/DNSListModal';
 const IpRangeRouter = ({ipRange,dispatch})=>{
 
-  const {list,loading,total,current,modalVisible,currentItem,isp,regions,ipListSearch} = ipRange;
+  const {list,loading,total,current,modalVisible,currentItem,isp,regions,ipListSearch,dnsModalVisible,dnsList} = ipRange;
+
 
   const ipListProps = {
     dataSource: list,
@@ -31,6 +33,11 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
     onAddClick:function(){
     dispatch({
       type:"ipRange/showModal",
+    });
+  },
+  onSyncClick(){
+    dispatch({
+      type:"ipRange/showDNSModal",
     });
   },
   onDeleteItem(record) {
@@ -95,11 +102,36 @@ const IpRangeRouter = ({ipRange,dispatch})=>{
 
  }
 
+ const dnsModalProps = {
+   visible :dnsModalVisible,
+   dnsList:dnsList,
+   onOk:function(data){
+     if(data && data.length > 0){
+       dispatch({
+         type:'ipRange/syncDns',
+         payload:data
+       });
+     }
+   },
+   onCancel:function(){
+     dispatch({
+       type:'ipRange/hideDNSModal'
+     })
+   }
+ }
+
+ const DnsModalGen = ()=>{
+   return (
+      <DNSListModal {...dnsModalProps}/>
+   );
+ }
+
   return(
     <MainLayout DefaultSelect={["IpRange"]} appName="IP 管理">
     <IpSearch {...IpSearchProps}/>
     <IpList {...ipListProps}></IpList>
     <IpListModalGen />
+    <DnsModalGen />
     </MainLayout>
 
   )

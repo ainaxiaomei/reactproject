@@ -1,7 +1,8 @@
 import request from '../../utils/request';
-import {add,queryRegion} from '../../services/ipRangeService.js'
+import {add,queryRegion} from '../../services/ipRangeService.js';
 import {queryLocationRecord,deleteLocationRecord} from '../../services/locationRecordService.js';
-import {queryIsp} from '../../services/ispService.js'
+import {queryIsp} from '../../services/ispService.js';
+import {queryDns} from '../../services/dnsService.js';
 
 export default {
 
@@ -38,6 +39,12 @@ export default {
           //查询区域
           dispatch({
             type: 'queryRegions',
+            payload: {},
+          });
+
+          //查询dns
+          dispatch({
+            type: 'queryDns',
             payload: {},
           });
         }
@@ -88,6 +95,9 @@ export default {
        yield call(add,payload);
        //刷新表格
        yield put({type:'query'});
+     },
+     *queryDns({ payload }, { call, put }){
+        yield call(queryDns,{});
      },
   },
 

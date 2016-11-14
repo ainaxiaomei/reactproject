@@ -1,7 +1,7 @@
 import request from '../../utils/request';
 import {query,del,add,queryRegion} from '../../services/ipRangeService.js'
 import {queryIsp} from '../../services/ispService.js'
-
+import {queryDns,syncDns} from '../../services/dnsService.js';
 export default {
 
   namespace: 'ipRange',
@@ -13,6 +13,8 @@ export default {
     current: 1,
     currentItem: {},
     modalVisible: false,
+    dnsModalVisible: false,
+    dnsList:{},
     modalType: 'create',
     isp:[],
     regions:[],
@@ -20,7 +22,8 @@ export default {
       continent:[],
       country:[],
       province:[],
-    }
+    },
+
   },
 
   subscriptions: {
@@ -42,6 +45,12 @@ export default {
           //查询区域
           dispatch({
             type: 'queryRegions',
+            payload: {},
+          });
+
+          //查询dns
+          dispatch({
+            type: 'queryDns',
             payload: {},
           });
         }
@@ -93,9 +102,28 @@ export default {
        //刷新表格
        yield put({type:'query'});
      },
+     *queryDns({ payload }, { call, put }){
+       const data =  yield call(queryDns,{});
+       if (data) {
+         yield put({
+           type: 'queryDnsSuccess',
+           payload: data
+         });
+       }else{
+       }
+     },
+     *syncDns({ payload }, { call, put }){
+       yield call(syncDns,payload);
+       yield put({
+         type:'hideDNSModal',
+       });
+     },
   },
 
 reducers:{
+  /**
+     =============================ipLIst相关===========================
+  */
   querySuccess(state,action){
        return {...state, list:action.payload.data, loading: false,total:action.payload.count};
   },
@@ -110,36 +138,17 @@ reducers:{
     state.list.push(newIpRange);
     return {...state,list:state.list.slice(0,10),total:state.total+1};
   },
+  /**
+     =============================isp相关===========================
+  */
   queryIspSuccess(state,action){
      return {...state,isp:action.payload.data};
   },
+  /**
+     =============================静态区域表相关===========================
+  */
   queryregionSuccess(state,action){
      return {...state,regions:action.payload.data};
-  },
-  //显示新增对话框
-  showModal(state,action){
-    return {...state,modalVisible:true};
-  },
-  //隐藏新增对话框
-  hideModal(state) {
-    //清空currentItem
-    return { ...state,currentItem:{},modalVisible: false };
-  },
-  //隐藏加载动画效果
-  hideLoadind(state){
-    return {...state,loading:false}
-  },
-  //显示加载效果
-  showLoading(state) {
-    return { ...state, loading: true };
-  },
-  //清空列表
-  clearList(state){
-      return {...state,list:[]}
-  },
-  //设置当前的页数
-  setCurrentPage(state,action){
-    return {...state,current:action.payload.page}
   },
   changeCountry(state,action){
     const data = state.regions.filter((item)=>{
@@ -160,7 +169,58 @@ reducers:{
       provinceList=[];
     }
      return {...state,ipListSearch:{...state.ipListSearch,province:provinceList}};
-  }
+  },
+  /**
+     =============================dva操作相关===========================
+  */
+  //显示新增对话框
+  showModal(state,action){
+    return {...state,modalVisible:true};
+  },
+  //隐藏新增对话框
+  hideModal(state) {
+    //清空currentItem
+    return { ...state,currentItem:{},modalVisible: false };
+  },
+
+  //隐藏加载动画效果
+  hideLoadind(state){
+    return {...state,loading:false}
+  },
+  //显示加载效果
+  showLoading(state) {
+    return { ...state, loading: true };
+  },
+  //清空列表
+  clearList(state){
+      return {...state,list:[]}
+  },
+  //设置当前的页数
+  setCurrentPage(state,action){
+    return {...state,current:action.payload.page}
+  },
+
+  /**
+     =============================DNS相关===========================
+  */
+  hideDNSModal(state){
+    return { ...state,dnsModalVisible: false };
+  },
+  showDNSModal(state){
+    return { ...state,dnsModalVisible: true };
+  },
+  queryDnsSuccess(state,action){
+    if(action.payload.data.data){
+      for(let a of action.payload.data.data){
+        if(a.enabled){
+          a.enabled = "true";
+        }else{
+          a.enabled = "false";
+        }
+      }
+    }
+    return {...state,dnsList:action.payload.data};
+  },
 }
 
 };
