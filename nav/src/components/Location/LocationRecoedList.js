@@ -5,13 +5,45 @@ function LocationRecoedList({
   total, current, loading, dataSource,
   onPageChange,
   onDeleteItem,
-  onAddClick
+  onAddClick,
+  onAddRecord,
+  onDeleteDomain,
+  onDeleteRecord
   }) {
-  const columns = [{
+  const columns = [
+  {
+    title: 'Id',
+    dataIndex: 'id',
+    key: 'id'
+  },{
     title: 'Domain',
     dataIndex: 'domain',
     key: 'domain'
-  }, {
+  },
+  {
+    title: 'Data',
+    dataIndex: 'data',
+    key: 'data',
+  },
+  {
+    title: 'Weight',
+    dataIndex: 'weight',
+    key: 'weight',
+  },
+  {
+    title: 'Enable',
+    dataIndex: 'enable',
+    key: 'enable',
+  },
+  {
+    title: 'Type',
+    dataIndex: 'type',
+    key: 'type',
+  },{
+    title: 'Isp',
+    dataIndex: 'isp',
+    key: 'isp',
+  },{
     title: 'Continent',
     dataIndex: 'continent',
     key: 'continent',
@@ -24,24 +56,36 @@ function LocationRecoedList({
     dataIndex: 'province',
     key: 'province',
   },{
-    title: 'Isp',
-    dataIndex: 'isp',
-    key: 'isp',
-  },{
-    title: 'Type',
-    dataIndex: 'type',
-    key: 'type',
-  },{
     title: 'Action',
     key: 'operation',
-    render: (text, record) => (
-      <p>
-        <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteItem(record)}>
-          <a>删除</a>
-        </Popconfirm>
-      </p>
-    ),
+    render: function(text, record){
+      if(record.children){
+        return(
+          <p>
+            <a onClick={() => onAddRecord(record)}>添加</a>
+            &nbsp;
+            <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteDomain(record)}>
+              <a>删除</a>
+            </Popconfirm>
+          </p>
+        );
+      }else{
+        return(
+          <p>
+            <a onClick={() => onEditRecord(record)}>编辑</a>
+            &nbsp;
+            <Popconfirm title="确定要删除吗？" onConfirm={() => onDeleteRecord(record)}>
+              <a>删除</a>
+            </Popconfirm>
+          </p>
+        );
+      }
+
+    }
   }];
+
+
+
 
  function uploadOnChange(info){
    if (info.file.status !== 'uploading') {
@@ -53,6 +97,17 @@ function LocationRecoedList({
       message.error(`${info.file.name} file upload failed.`);
     }
  }
+
+ const rowSelection = {
+ onChange(selectedRowKeys, selectedRows) {
+
+   if(selectedRows.length > 0){
+     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+   }
+
+ }
+
+};
   return (
     <div>
       <Table
@@ -60,6 +115,7 @@ function LocationRecoedList({
         dataSource={dataSource}
         loading={loading}
         pagination={false}
+        rowSelection={rowSelection}
       />
       <div>
       <Pagination

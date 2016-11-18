@@ -17,6 +17,7 @@ const LocationRecordModal = ({
   item = {},
   onOk,
   onCancel,
+  state,
   form: {
     getFieldDecorator,
     validateFields,
@@ -40,17 +41,7 @@ const LocationRecordModal = ({
     });
   }
 
-  function checkIp(rule, value, callback) {
-    if (!isIP(value)) {
-      callback(new Error('IP地址不合法'));
-    } else {
-      callback();
-    }
-  }
-
-
-
-  const modalOpts = {
+const modalOpts = {
     title: '调度信息',
     visible,
     onOk: handleOk,
@@ -68,6 +59,15 @@ if(isps){
   }
 }
 
+function checkData(rule, value, callback) {
+  var re = /([0-9]:[0-9];)+/;
+  if (re.test(value)) {
+    callback(new Error('Data不合法'));
+  } else {
+    callback();
+  }
+}
+
 function handleSelect(value,options){
 }
   return (
@@ -79,26 +79,12 @@ function handleSelect(value,options){
           {...formItemLayout}
         >
           {getFieldDecorator('domain', {
-            initialValue: item.ipBegin,
+            initialValue: item.domain,
             rules: [
-              { validator: checkIp },
+              { required: true, message: 'Domain不能为空' },
             ],
           })(
             <Input type="text" />
-          )}
-        </FormItem>
-        <FormItem
-          label="IP"
-          hasFeedback
-          {...formItemLayout}
-        >
-          {getFieldDecorator('ipList', {
-            initialValue: "",
-            rules: [
-              { required: true, message: 'IP地址不能为空' },
-            ],
-          })(
-              <Input type="text" />
           )}
         </FormItem>
         <FormItem
@@ -107,12 +93,18 @@ function handleSelect(value,options){
           {...formItemLayout}
         >
           {getFieldDecorator('type', {
-            initialValue: item.ipEnd,
+            initialValue: "",
             rules: [
-              { validator: checkIp },
             ],
           })(
-            <Input type="text" />
+            <Select>
+              <Option value="A">A</Option>
+              <Option value="CNAME">CNAME</Option>
+              <Option value="MX" >MX</Option>
+              <Option value="TXT">TXT</Option>
+              <Option value="SRV">SRV</Option>
+              <Option value="AAAA">AAAA</Option>
+            </Select>
           )}
         </FormItem>
         <FormItem
@@ -121,7 +113,7 @@ function handleSelect(value,options){
           {...formItemLayout}
         >
           {getFieldDecorator('geo', {
-            initialValue: item.continent,
+            initialValue: "",
           })(
             <Cascader   options={regions} changeOnSelect  />
           )}
@@ -138,6 +130,20 @@ function handleSelect(value,options){
             ],
           })(
             <Select onSelect={handleSelect}>{children}</Select>
+          )}
+        </FormItem>
+        <FormItem
+          label="Data"
+          hasFeedback
+          {...formItemLayout}
+        >
+          {getFieldDecorator('ipList', {
+            initialValue: "",
+            rules: [
+              { required: true, message: 'Data不能为空' },
+            ],
+          })(
+              <Input type="text" />
           )}
         </FormItem>
       </Form>
