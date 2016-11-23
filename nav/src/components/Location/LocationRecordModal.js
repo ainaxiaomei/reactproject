@@ -36,8 +36,15 @@ const LocationRecordModal = ({
       const obj = isps.filter((item)=>{
         return item.code == data.isp;
       });
-      const newData = {...data,isp:obj[0].abbreviation};
-      onOk(newData);
+
+      if(obj && obj.length > 0){
+        const newData = {...data,isp:obj[0].abbreviation};
+        onOk(newData);
+      }else{
+        onOk(data);
+      }
+
+
     });
   }
 
@@ -91,6 +98,7 @@ function handleSelect(value,options){
           label="Type"
           hasFeedback
           {...formItemLayout}
+          style={{display:item.type == "CLONE" ? 'none': ''}}
         >
           {getFieldDecorator('type', {
             initialValue: "",
@@ -111,6 +119,7 @@ function handleSelect(value,options){
           label="Geo"
           hasFeedback
           {...formItemLayout}
+          style={{display:item.type == "CLONE" ? 'none': ''}}
         >
           {getFieldDecorator('geo', {
             initialValue: "",
@@ -122,11 +131,11 @@ function handleSelect(value,options){
           label="ISP"
           hasFeedback
           {...formItemLayout}
+          style={{display:item.type == "CLONE" ? 'none': ''}}
         >
           {getFieldDecorator('isp', {
             initialValue: "",
             rules: [
-              { required: true, message: 'Isp不能为空' },
             ],
           })(
             <Select onSelect={handleSelect}>{children}</Select>

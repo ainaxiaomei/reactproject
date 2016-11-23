@@ -1,6 +1,6 @@
 import request from '../../utils/request';
 import {queryRegion} from '../../services/ipRangeService.js';
-import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord} from '../../services/locationRecordService.js';
+import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch} from '../../services/locationRecordService.js';
 import {queryIsp} from '../../services/ispService.js';
 import {queryDns} from '../../services/dnsService.js';
 
@@ -18,6 +18,8 @@ export default {
     currentRRecordItem:{},
     modalVisible: false,
     locationRecordModalVisible:false,
+    locationRecordListAcionMode:"",
+    locationRecordSelectedRows:[],
     modalType: 'create',
     isp:[],
     regions:[],
@@ -115,9 +117,27 @@ export default {
        //刷新表格
        yield put({type:'query'});
      },
+     *createBatch({ payload }, { call, put }){
+       yield put({ type: 'hideLocationRecordModal' });
+       yield call(addBatch,payload);
+       //刷新表格
+       yield put({type:'query'});
+     },
      *createRRecord({ payload }, { call, put }) {
        yield put({ type: 'hideRRecordModal' });
        yield call(addRRecord,payload);
+       //刷新表格
+       yield put({type:'query'});
+     },
+     *createRRecordBatch({ payload }, { call, put }){
+       yield put({ type: 'hideRRecordModal' });
+       yield call(addRRecordBatch,payload);
+       //刷新表格
+       yield put({type:'query'});
+     },
+     *modifyRRecord({ payload }, { call, put }){
+       yield put({ type: 'hideRRecordModal' });
+       yield call(modifyRRecord,payload);
        //刷新表格
        yield put({type:'query'});
      },
@@ -200,10 +220,13 @@ reducers:{
            var obj = new Object();
            obj.domain = result[i].domain;
            obj.key = result[i].domain + i;
+           obj.countryText = result[i].countryText;
            obj.country = result[i].country;
-           obj.id = result[i].id;
            obj.continent = result[i].continent;
            obj.province = result[i].province;
+           obj.id = result[i].id;
+           obj.continentText = result[i].continentText;
+           obj.provinceText = result[i].provinceText;
            obj.isp = result[i].isp;
            obj.type = result[i].type;
            obj.data= "-";
@@ -223,7 +246,6 @@ reducers:{
            objArray.push(obj);
          }
         //  console.log(action.payload.data);
-       console.log(objArray);
        return {...state, list:objArray, loading: false,total:action.payload.total};
   },
   deleteSuccess(state,action){
@@ -265,7 +287,14 @@ reducers:{
   },
   //显示新增对话框
   showRRecordModal(state,action){
-    return {...state,modalVisible:true,currentRRecordItem:{...state.currentRRecordItem,recordId:action.payload.record.id}};
+    if("EDIT" == action.payload.type){
+        return {...state,modalVisible:true,currentRRecordItem:{enabled:action.payload.record.enabled,type:"EDIT",key:action.payload.record.key,ipList:action.payload.record.data + ":" + action.payload.record.weight}};
+    }else if ("BATCH" == action.payload.type){
+        return {...state,modalVisible:true,currentRRecordItem:{batch:action.payload.record,type:"BATCH"}};
+    }else{
+      return {...state,modalVisible:true,currentRRecordItem:{recordId:action.payload.record.id}};
+    }
+
   },
   //隐藏新增对话框
   hideRRecordModal(state) {
@@ -274,12 +303,20 @@ reducers:{
   },
 
   showLocationRecordModal(state,action){
-      return {...state,locationRecordModalVisible:true};
+      if(action.payload && action.payload.type == "CLONE"){
+        return {...state,locationRecordModalVisible:true,currentLocationRecordItem:{type:"CLONE",data:state.locationRecordSelectedRows}};
+      }else{
+        return {...state,locationRecordModalVisible:true};
+      }
+
   },
   hideLocationRecordModal(state,action){
       return {...state,locationRecordModalVisible:false};
   },
-  //隐藏加载动画效果
+  changeLocationRecordListActionMode(state,action){
+    return {...state,locationRecordListAcionMode:action.payload.mode,locationRecordSelectedRows:action.payload.rows};
+  },
+    //隐藏加载动画效果
   hideLoadind(state){
     return {...state,loading:false}
   },

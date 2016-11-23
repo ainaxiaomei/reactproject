@@ -31,7 +31,7 @@ const RRecordModal = ({
         return;
       }
       const data = { ...getFieldsValue(), key: item.key };
-      onOk(data);
+      onOk(data,item.type);
     });
   }
 
@@ -73,7 +73,7 @@ const RRecordModal = ({
           {...formItemLayout}
         >
           {getFieldDecorator('ipList', {
-            initialValue: "",
+            initialValue: item.ipList,
             rules: [
               { required: true, message: 'IP地址不能为空' },
             ],

@@ -102,6 +102,23 @@ const LocationSearch = Form.create()(React.createClass({
           )}
         </FormItem>
       </Col>,
+      <Col span={8} key='type'>
+        <FormItem
+          {...formItemLayout}
+          label={'Type'}
+        >
+          {getFieldDecorator('type')(
+            <Select>
+              <Option value="A">A</Option>
+              <Option value="CNAME">CNAME</Option>
+              <Option value="MX" >MX</Option>
+              <Option value="TXT">TXT</Option>
+              <Option value="SRV">SRV</Option>
+              <Option value="AAAA">AAAA</Option>
+            </Select>
+          )}
+        </FormItem>
+      </Col>,
       <Col span={8} key='isp'>
         <FormItem
           {...formItemLayout}

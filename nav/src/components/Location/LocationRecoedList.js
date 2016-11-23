@@ -5,10 +5,17 @@ function LocationRecoedList({
   total, current, loading, dataSource,
   onPageChange,
   onDeleteItem,
-  onAddClick,
+  onAddLocationRecord,
+  onAddRRecordBatch,
   onAddRecord,
   onDeleteDomain,
-  onDeleteRecord
+  onDeleteRecord,
+  onEditRecord,
+  locationRecordListAcionMode,
+  changeActionMode,
+  locationRecordSelectedRows,
+  onCloneLoactionRecord,
+  onDeleteLoactionRecord
   }) {
   const columns = [
   {
@@ -45,17 +52,17 @@ function LocationRecoedList({
     key: 'isp',
   },{
     title: 'Continent',
-    dataIndex: 'continent',
-    key: 'continent',
+    dataIndex: 'continentText',
+    key: 'continentText',
   }, {
     title: 'Country',
-    dataIndex: 'country',
-    key: 'country',
+    dataIndex: 'countryText',
+    key: 'countryText',
   }, {
     title: 'Province',
-    dataIndex: 'province',
-    key: 'province',
-  },{
+    dataIndex: 'provinceText',
+    key: 'provinceText',
+    },{
     title: 'Action',
     key: 'operation',
     render: function(text, record){
@@ -86,7 +93,21 @@ function LocationRecoedList({
 
 
 
+function handleAddClick(data){
+  if(locationRecordListAcionMode == "BATCH"){
+    onAddRRecordBatch(locationRecordSelectedRows);
+  }else{
+    onAddLocationRecord(data);
+  }
+}
 
+function handleCloneClick(){
+  onCloneLoactionRecord(locationRecordSelectedRows,"CLONE");
+}
+
+function handleDeleteClick(){
+  onDeleteLoactionRecord(locationRecordSelectedRows);
+}
  function uploadOnChange(info){
    if (info.file.status !== 'uploading') {
       console.log('uploading...');
@@ -98,14 +119,31 @@ function LocationRecoedList({
     }
  }
 
+
+
+
  const rowSelection = {
- onChange(selectedRowKeys, selectedRows) {
 
-   if(selectedRows.length > 0){
-     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-   }
+   onSelect(record, selected, selectedRows) {
 
- }
+     if (selectedRows.length <= 0){
+       changeActionMode("",[]);
+     }else{
+        changeActionMode("BATCH",selectedRows);
+     }
+   },
+
+ onSelectAll(selected, selectedRows, changeRows) {
+     if (selectedRows.length <= 0){
+       changeActionMode("");
+     }else{
+        changeActionMode("BATCH",selectedRows);
+     }
+   },
+
+   getCheckboxProps: record => ({
+    disabled: record.id == undefined,    // Column configuration not to be checked
+  }),
 
 };
   return (
@@ -126,13 +164,15 @@ function LocationRecoedList({
         pageSize={10}
         onChange={onPageChange}
       />
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={onAddClick}>Add</Button>&nbsp;&nbsp;
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleAddClick}>Add</Button>&nbsp;&nbsp;
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" >Sync</Button>&nbsp;&nbsp;
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleCloneClick} disabled={!(locationRecordListAcionMode == "BATCH")}>Clone</Button>&nbsp;&nbsp;
     <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv'>
       <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
         <Icon type="upload" /> Import
       </Button>
     </Upload>
+
     </div>
     </div>
   );

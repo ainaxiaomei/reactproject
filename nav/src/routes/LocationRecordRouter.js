@@ -8,13 +8,16 @@ import RRecordModal from '../components/Location/RRecordModal';
 import LocationSerach from '../components/Location/LocationSearch';
 const LocationRecordRouter = ({locationRecord,dispatch})=>{
   const {list,loading,total,current,modalVisible,currentItem,isp,regions,locationSearch,
-    currentRRecordItem,locationRecordModalVisible,currentLocationRecordItem} = locationRecord;
+    currentRRecordItem,locationRecordModalVisible,
+    currentLocationRecordItem,locationRecordListAcionMode,locationRecordSelectedRows} = locationRecord;
 
   const locationRecordProps = {
     dataSource: list,
     loading:loading,
     total:total,
     current:current,
+    locationRecordListAcionMode:locationRecordListAcionMode,
+    locationRecordSelectedRows:locationRecordSelectedRows,
     onPageChange(page) {
       dispatch({
         type:'locationRecord/setCurrentPage',
@@ -29,9 +32,42 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
         }
       });
     },
-    onAddClick:function(){
+    onAddLocationRecord:function(){
     dispatch({
       type:"locationRecord/showLocationRecordModal",
+    });
+  },
+  onCloneLoactionRecord(record,state){
+    dispatch({
+      type:"locationRecord/showLocationRecordModal",
+      payload:{
+        type:"CLONE"
+      }
+    });
+  },
+  onDeleteLoactionRecord(record){
+    console.log(record);
+  },
+  onAddRRecordBatch(record){
+    let newRecord = record.filter((element)=>{
+      return element.id && element.domain
+    });
+    dispatch({
+      type:"locationRecord/showRRecordModal",
+      payload:{
+        'record':newRecord,
+        'type' : "BATCH"
+      }
+    });
+  },
+  changeActionMode(mode,rows){
+
+    dispatch({
+      type: 'locationRecord/changeLocationRecordListActionMode',
+      payload:{
+        mode:mode,
+        rows:rows
+      }
     });
   },
   onDeleteDomain(record){
@@ -58,6 +94,16 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
       }
     });
   },
+  onEditRecord(record){
+    dispatch({
+      type:"locationRecord/showRRecordModal",
+      payload:{
+        'record':record,
+        'type':"EDIT"
+      }
+
+    });
+  },
   onAddRecord(record){
     dispatch({
       type:"locationRecord/showRRecordModal",
@@ -75,23 +121,61 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
     isps:isp,
     regions:regions,
     onOk:function(data){
-      //处理GEO转化为洲国省
-      var array = new Array();
+      if(currentLocationRecordItem.type == "CLONE"){
+         var list = new Array();
+         var ipList = new Array();
+         var cloneArray = currentLocationRecordItem.data;
 
-      var records = data.ipList.split(";");
-      for(let a of records){
-        var res =  a.split(":");
-        var object = new Object();
-        object.weight = res[1];
-        object.enabled = true;
-        object.data = res[0];
-        array.push(object);
+         var ips = data.ipList.split(";");
+         for(let a of ips){
+           var res =  a.split(":");
+           var object = new Object();
+           object.weight = res[1];
+           object.enabled = true;
+           object.data = res[0];
+           ipList.push(object);
+         }
+
+         for (let record of cloneArray ){
+             let object = new Object();
+             object.domain = data.domain;
+             object.country = record.country;
+             object.province = record.province;
+             object.continent = record.continent;
+             object.isp = record.isp;
+             object.type = record.type;
+             if(ipList.length > 0){
+                object.ipList = ipList;
+             }else{
+               object.ipList = record.ipList;
+             }
+
+             list.push(object);
+         }
+         dispatch({
+           type:'locationRecord/createBatch',
+           payload:list
+         });
+      }else{
+        //处理GEO转化为洲国省
+        var array = new Array();
+
+        var records = data.ipList.split(";");
+        for(let a of records){
+          var res =  a.split(":");
+          var object = new Object();
+          object.weight = res[1];
+          object.enabled = true;
+          object.data = res[0];
+          array.push(object);
+        }
+        data = {...data,"continent":data.geo[0],"country":data.geo[1],"province":data.geo[2],ipList:array,ips:data.ipList }
+        dispatch({
+          type:'locationRecord/create',
+          payload:data
+        });
       }
-      data = {...data,"continent":data.geo[0],"country":data.geo[1],"province":data.geo[2],ipList:array,ips:data.ipList }
-      dispatch({
-        type:'locationRecord/create',
-        payload:data
-      });
+
     },
     onCancel:function(){
       dispatch({
@@ -103,11 +187,24 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
   const RRecodModalProps = {
     visible :modalVisible,
     item :currentRRecordItem,
-    onOk:function(data){
-      dispatch({
-        type:'locationRecord/createRRecord',
-        payload:data
-      })
+    onOk:function(data,type){
+      if("EDIT" == type){
+        dispatch({
+          type:'locationRecord/modifyRRecord',
+          payload:data
+        })
+      }else if("BATCH" == type){
+        dispatch({
+          type:'locationRecord/createRRecordBatch',
+          payload:{...data,batch:currentRRecordItem.batch}
+        })
+      }else{
+        dispatch({
+          type:'locationRecord/createRRecord',
+          payload:data
+        })
+      }
+
     },
     onCancel:function(){
       dispatch({
