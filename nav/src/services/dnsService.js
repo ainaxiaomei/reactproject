@@ -14,3 +14,13 @@ export async function syncDns(data){
 
   return
 }
+
+export async function syncDnsDomain(data){
+   console.log(data);
+   for(let i = 0; i < data.length ; i++){
+       const url = '/location/dnsserver/syncdomain?host=' + data[i].host;
+       request(url);
+   }
+
+  return
+}

@@ -6,10 +6,11 @@ import LocationRecoedList from '../components/Location/LocationRecoedList';
 import LocationRecordModal from '../components/Location/LocationRecordModal';
 import RRecordModal from '../components/Location/RRecordModal';
 import LocationSerach from '../components/Location/LocationSearch';
+import DNSListModal from '../components/commom/DNSListModal';
 const LocationRecordRouter = ({locationRecord,dispatch})=>{
   const {list,loading,total,current,modalVisible,currentItem,isp,regions,locationSearch,
     currentRRecordItem,locationRecordModalVisible,
-    currentLocationRecordItem,locationRecordListAcionMode,locationRecordSelectedRows} = locationRecord;
+    currentLocationRecordItem,locationRecordListAcionMode,locationRecordSelectedRows,dnsModalVisible,dnsList} = locationRecord;
 
   const locationRecordProps = {
     dataSource: list,
@@ -47,6 +48,11 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
   },
   onDeleteLoactionRecord(record){
     console.log(record);
+  },
+  onSyncLoactionRecord(){
+    dispatch({
+      type:"locationRecord/showDNSModal",
+    });
   },
   onAddRRecordBatch(record){
     let newRecord = record.filter((element)=>{
@@ -240,6 +246,23 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
 
   }
 
+  const dnsModalProps = {
+    visible :dnsModalVisible,
+    dnsList:dnsList,
+    onOk:function(data){
+      if(data && data.length > 0){
+        dispatch({
+          type:'locationRecord/syncDns',
+          payload:data
+        });
+      }
+    },
+    onCancel:function(){
+      dispatch({
+        type:'locationRecord/hideDNSModal'
+      })
+    }
+  }
   const RRecordModalGen = ()=>{
     return (
        <RRecordModal {...RRecodModalProps}/>
@@ -252,12 +275,18 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
     );
   }
 
+  const DnsModalGen = ()=>{
+    return (
+       <DNSListModal {...dnsModalProps}/>
+    );
+  }
   return(
     <MainLayout DefaultSelect={["locationRecord"]} appName="调度管理">
     <LocationSerach {...locationSearchProps}/>
     <LocationRecoedList {...locationRecordProps}/>
      <RRecordModalGen />
      <LocationRecordModalGen />
+     <DnsModalGen />
     </MainLayout>
 
   )

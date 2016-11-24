@@ -2,7 +2,7 @@ import request from '../../utils/request';
 import {queryRegion} from '../../services/ipRangeService.js';
 import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch} from '../../services/locationRecordService.js';
 import {queryIsp} from '../../services/ispService.js';
-import {queryDns} from '../../services/dnsService.js';
+import {queryDns,syncDnsDomain} from '../../services/dnsService.js';
 
 export default {
 
@@ -28,6 +28,9 @@ export default {
       country:[],
       province:[],
     },
+
+    dnsModalVisible: false,
+    dnsList:{},
   },
 
   subscriptions: {
@@ -142,11 +145,45 @@ export default {
        yield put({type:'query'});
      },
      *queryDns({ payload }, { call, put }){
-        yield call(queryDns,{});
+       const data =  yield call(queryDns,{});
+       if (data) {
+         yield put({
+           type: 'queryDnsSuccess',
+           payload: data
+         });
+       }else{
+       }
+     },
+     *syncDns({ payload }, { call, put }){
+       yield call(syncDnsDomain,payload);
+       yield put({
+         type:'hideDNSModal',
+       });
      },
   },
 
 reducers:{
+  /**
+     =============================DNS相关===========================
+  */
+  hideDNSModal(state){
+    return { ...state,dnsModalVisible: false };
+  },
+  showDNSModal(state){
+    return { ...state,dnsModalVisible: true };
+  },
+  queryDnsSuccess(state,action){
+    if(action.payload.data.data){
+      for(let a of action.payload.data.data){
+        if(a.enabled){
+          a.enabled = "true";
+        }else{
+          a.enabled = "false";
+        }
+      }
+    }
+    return {...state,dnsList:action.payload.data};
+  },
   querySuccess(state,action){
     /*
        let result = action.payload.data;

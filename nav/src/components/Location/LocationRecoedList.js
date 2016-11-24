@@ -15,7 +15,8 @@ function LocationRecoedList({
   changeActionMode,
   locationRecordSelectedRows,
   onCloneLoactionRecord,
-  onDeleteLoactionRecord
+  onDeleteLoactionRecord,
+  onSyncLoactionRecord
   }) {
   const columns = [
   {
@@ -108,6 +109,10 @@ function handleCloneClick(){
 function handleDeleteClick(){
   onDeleteLoactionRecord(locationRecordSelectedRows);
 }
+
+function handleSyncClick(){
+  onSyncLoactionRecord();
+}
  function uploadOnChange(info){
    if (info.file.status !== 'uploading') {
       console.log('uploading...');
@@ -165,7 +170,7 @@ function handleDeleteClick(){
         onChange={onPageChange}
       />
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleAddClick}>Add</Button>&nbsp;&nbsp;
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" >Sync</Button>&nbsp;&nbsp;
+    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleSyncClick}>Sync</Button>&nbsp;&nbsp;
     <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleCloneClick} disabled={!(locationRecordListAcionMode == "BATCH")}>Clone</Button>&nbsp;&nbsp;
     <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv'>
       <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
