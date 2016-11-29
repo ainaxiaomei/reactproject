@@ -1,8 +1,9 @@
 import request from '../../utils/request';
 import {queryRegion} from '../../services/ipRangeService.js';
-import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch} from '../../services/locationRecordService.js';
+import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch,getFilteredRegions} from '../../services/locationRecordService.js';
 import {queryIsp} from '../../services/ispService.js';
 import {queryDns,syncDnsDomain} from '../../services/dnsService.js';
+import { Modal} from 'antd';
 
 export default {
 
@@ -28,7 +29,7 @@ export default {
       country:[],
       province:[],
     },
-
+    enableRRecordSelect :false,
     dnsModalVisible: false,
     dnsList:{},
   },
@@ -78,24 +79,56 @@ export default {
            payload: data
          });
        }else{
+        Modal.error({
+           title: 'This is an error message',
+           content: 'Error',
+         });
           yield put({ type: 'hideLoadind' });
        }
      },
      *queryRegions({ payload }, { select, call, put }){
-      const data =  yield call(queryRegion);
-      yield  put({
-        type:'queryregionSuccess',
-        payload:data
-      });
+      const data =  yield call(getFilteredRegions);
+      if(data){
+        yield  put({
+          type:'queryregionSuccess',
+          payload:data
+        });
+      }else{
+        Modal.error({
+           title: 'This is an error message',
+           content: 'Error',
+         });
+      }
+
     },
      *queryIsps({ payload }, { select, call, put }){
        const data = yield call(queryIsp);
-       yield put({
-         type: 'queryIspSuccess',
-         payload: data.data
-        });
+       if(data){
+         yield put({
+           type: 'queryIspSuccess',
+           payload: data.data
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'Error',
+          });
+       }
      },
-
+     *queryDns({ payload }, { call, put }){
+       const data =  yield call(queryDns,{});
+       if (data) {
+         yield put({
+           type: 'queryDnsSuccess',
+           payload: data
+         });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'Error',
+          });
+       }
+     },
      *delete({ payload }, { select, call, put }){
       yield call(deleteLocationRecord,payload.record)
       yield put({
@@ -144,16 +177,6 @@ export default {
        //刷新表格
        yield put({type:'query'});
      },
-     *queryDns({ payload }, { call, put }){
-       const data =  yield call(queryDns,{});
-       if (data) {
-         yield put({
-           type: 'queryDnsSuccess',
-           payload: data
-         });
-       }else{
-       }
-     },
      *syncDns({ payload }, { call, put }){
        yield call(syncDnsDomain,payload);
        yield put({
@@ -183,6 +206,12 @@ reducers:{
       }
     }
     return {...state,dnsList:action.payload.data};
+  },
+
+  toggleRRecordSelect(state,action){
+
+
+    return {...state,enableRRecordSelect:!state.enableRRecordSelect};
   },
   querySuccess(state,action){
     /*
@@ -348,9 +377,22 @@ reducers:{
 
   },
   hideLocationRecordModal(state,action){
-      return {...state,locationRecordModalVisible:false};
+      return {...state,locationRecordModalVisible:false,currentLocationRecordItem:{}};
   },
   changeLocationRecordListActionMode(state,action){
+    var rows = action.payload.rows
+    if(rows){
+      for (let record of rows){
+         for(let data of state.list){
+            if(record.id == data.id){
+              record.ipList = data.children;
+              break;
+            }
+         }
+
+      }
+    }
+
     return {...state,locationRecordListAcionMode:action.payload.mode,locationRecordSelectedRows:action.payload.rows};
   },
     //隐藏加载动画效果

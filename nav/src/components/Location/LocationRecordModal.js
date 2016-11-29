@@ -149,7 +149,7 @@ function handleSelect(value,options){
           {getFieldDecorator('ipList', {
             initialValue: "",
             rules: [
-              { required: true, message: 'Data不能为空' },
+              { required:  item.type == "CLONE" ? false: true, message: 'Data不能为空' },
             ],
           })(
               <Input type="text" />

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Icon,Upload,Table, Popconfirm, Pagination,Button,message} from 'antd';
+import { Icon,Upload,Table, Popconfirm, Pagination,Button,message,Switch} from 'antd';
 
 function LocationRecoedList({
   total, current, loading, dataSource,
@@ -16,7 +16,11 @@ function LocationRecoedList({
   locationRecordSelectedRows,
   onCloneLoactionRecord,
   onDeleteLoactionRecord,
-  onSyncLoactionRecord
+  onSyncLoactionRecord,
+  enableRRecordSelect,
+  toggleRRecordSelect,
+  onDeleteRRecordBatch,
+  onToggleRRecordBatch
   }) {
   const columns = [
   {
@@ -113,6 +117,14 @@ function handleDeleteClick(){
 function handleSyncClick(){
   onSyncLoactionRecord();
 }
+
+function handleDeleteRRecordBatch(){
+  onDeleteRRecordBatch(locationRecordSelectedRows);
+}
+
+function handleToggleRRecordBatch(){
+  onToggleRRecordBatch(locationRecordSelectedRows);
+}
  function uploadOnChange(info){
    if (info.file.status !== 'uploading') {
       console.log('uploading...');
@@ -130,7 +142,6 @@ function handleSyncClick(){
  const rowSelection = {
 
    onSelect(record, selected, selectedRows) {
-
      if (selectedRows.length <= 0){
        changeActionMode("",[]);
      }else{
@@ -146,39 +157,48 @@ function handleSyncClick(){
      }
    },
 
-   getCheckboxProps: record => ({
-    disabled: record.id == undefined,    // Column configuration not to be checked
-  }),
-
-};
+   getCheckboxProps: function(record){
+     if(enableRRecordSelect){
+       return  {disabled: record.id != undefined};    // Column configuration not to be checked
+     }else{
+       return  {disabled: record.id == undefined};  // Column configuration not to be checked
+     }
+  }
+}
   return (
     <div>
-      <Table
-        columns={columns}
-        dataSource={dataSource}
-        loading={loading}
-        pagination={false}
-        rowSelection={rowSelection}
-      />
+      <div >
+      Batch : <Switch  onChange = {toggleRRecordSelect} />
+      </div>
       <div>
-      <Pagination
-        className="ant-table-pagination"
-        total={total}
-        showTotal={total => `Total ${total}`}
-        current={current}
-        pageSize={10}
-        onChange={onPageChange}
-      />
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleAddClick}>Add</Button>&nbsp;&nbsp;
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleSyncClick}>Sync</Button>&nbsp;&nbsp;
-    <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleCloneClick} disabled={!(locationRecordListAcionMode == "BATCH")}>Clone</Button>&nbsp;&nbsp;
-    <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv'>
-      <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
-        <Icon type="upload" /> Import
-      </Button>
-    </Upload>
-
-    </div>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            loading={loading}
+            pagination={false}
+            rowSelection={rowSelection}
+          />
+           <div>
+            <Pagination
+              className="ant-table-pagination"
+              total={total}
+              showTotal={total => `Total ${total}`}
+              current={current}
+              pageSize={10}
+              onChange={onPageChange}
+             />
+              <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleAddClick}>Add</Button>&nbsp;&nbsp;
+              <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleSyncClick}>Sync</Button>&nbsp;&nbsp;
+              <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleCloneClick} disabled={!(locationRecordListAcionMode == "BATCH")}>Clone</Button>&nbsp;&nbsp;
+              <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleDeleteRRecordBatch} disabled={!(locationRecordListAcionMode == "BATCH" && enableRRecordSelect)}>Delete</Button>&nbsp;&nbsp;
+              <Button style={{marginTop:'16px',marginButton:'16px'}} type="primary" onClick={handleToggleRRecordBatch} disabled={!(locationRecordListAcionMode == "BATCH" && enableRRecordSelect)}>Toggle</Button>&nbsp;&nbsp;
+              <Upload name='file' action='/iplibrary/iprange/upload' onChange={uploadOnChange} accept='.csv' style={{display:"none"}}>
+                <Button type="ghost" style={{marginTop:'16px',marginButton:'16px'}}>
+                  <Icon type="upload" /> Import
+                </Button>
+              </Upload>
+            </div>
+      </div>
     </div>
   );
 }

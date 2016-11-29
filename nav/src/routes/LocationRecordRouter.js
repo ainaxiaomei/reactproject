@@ -10,7 +10,8 @@ import DNSListModal from '../components/commom/DNSListModal';
 const LocationRecordRouter = ({locationRecord,dispatch})=>{
   const {list,loading,total,current,modalVisible,currentItem,isp,regions,locationSearch,
     currentRRecordItem,locationRecordModalVisible,
-    currentLocationRecordItem,locationRecordListAcionMode,locationRecordSelectedRows,dnsModalVisible,dnsList} = locationRecord;
+    currentLocationRecordItem,locationRecordListAcionMode,locationRecordSelectedRows,
+    dnsModalVisible,dnsList,enableRRecordSelect} = locationRecord;
 
   const locationRecordProps = {
     dataSource: list,
@@ -19,7 +20,53 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
     current:current,
     locationRecordListAcionMode:locationRecordListAcionMode,
     locationRecordSelectedRows:locationRecordSelectedRows,
-    onPageChange(page) {
+    enableRRecordSelect:enableRRecordSelect,
+    onDeleteRRecordBatch(data){
+      var newData = data.filter((element)=>{
+        return  element.id == undefined;
+      });
+      for(let record of newData){
+        dispatch({
+          type: 'locationRecord/deleteRecord',
+          payload:{
+            record:record
+          }
+        });
+      }
+
+    },
+    onToggleRRecordBatch(data){
+      var newData = data.filter((element)=>{
+        return  element.id == undefined;
+      });
+
+      for(let record of newData){
+        var enable = "flase" ;
+        let key = record.key;
+        for(let a of list){
+          for( let b of a.children){
+            if (b.key == key){
+              enable =b.enable;
+              break;
+            }
+          }
+        }
+        var object = new Object();
+        //不能直接改变data的值，state只能有reducer改变
+        object.enabled = (enable == "true" ? false : true) ;
+        object.ipList = record.data;
+        object.weight = record.weight;
+        object.key = record.key;
+        dispatch({
+          type:'locationRecord/modifyRRecord',
+          payload:object
+        })
+      }
+
+
+
+    },
+     onPageChange(page) {
       dispatch({
         type:'locationRecord/setCurrentPage',
         payload:{
@@ -32,6 +79,19 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
           'page':page
         }
       });
+    },
+    toggleRRecordSelect(){
+
+      dispatch({
+        type:'locationRecord/toggleRRecordSelect',
+        });
+        //刷新不然不生效
+        dispatch({
+          type:'locationRecord/query',
+          payload:{
+            'page':current
+          }
+        });
     },
     onAddLocationRecord:function(){
     dispatch({
@@ -133,15 +193,17 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
          var cloneArray = currentLocationRecordItem.data;
 
          var ips = data.ipList.split(";");
-         for(let a of ips){
-           var res =  a.split(":");
-           var object = new Object();
-           object.weight = res[1];
-           object.enabled = true;
-           object.data = res[0];
-           ipList.push(object);
-         }
 
+         for(let a of ips){
+            var res =  a.split(":");
+           if(res[0] != ""){
+             var object = new Object();
+             object.weight = res[1];
+             object.enabled = true;
+             object.data = res[0];
+             ipList.push(object);
+           }
+         }
          for (let record of cloneArray ){
              let object = new Object();
              object.domain = data.domain;

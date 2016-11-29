@@ -53,6 +53,7 @@ export async function addBatch(data){
 
 
 export async function modifyRRecord(data){
+  console.log(data);
   var key = data.key.split("-");
   var res =  data.ipList.split(":");
   var object = new Object();
@@ -61,7 +62,6 @@ export async function modifyRRecord(data){
   object.data = res[0];
   object.recordId = key[0];
   var json = JSON.stringify(object);
-  console.log(json);
   return request('/location/rrecord/update' ,
    {
     method: 'post',
@@ -120,4 +120,11 @@ export async function addRRecordBatch(data){
     'Content-Type': 'application/json',
   },
   });
+}
+
+
+export async function getFilteredRegions(){
+  const url = '/iplibrary/region/getFilteredRegions'
+  return request(url);
+
 }
