@@ -72,116 +72,186 @@ export default {
        yield put({ type: 'showLoading' });
        //清空数据
        yield put({type: 'clearList'});
-      const {data} = yield call(queryLocationRecord,payload);
-       if (data) {
+      const result = yield call(queryLocationRecord,payload);
+       if (!result.err) {
          yield put({
            type: 'querySuccess',
-           payload: data
+           payload: result.data
          });
        }else{
-        Modal.error({
-           title: 'This is an error message',
-           content: 'Error',
-         });
+         Modal.error({
+            title: 'This is an error message',
+            content: 'QueryLocation Error ! \n' + "Error Message :" +result.msg.exception ,
+          });
           yield put({ type: 'hideLoadind' });
        }
      },
      *queryRegions({ payload }, { select, call, put }){
-      const data =  yield call(getFilteredRegions);
-      if(data){
+      const result =  yield call(getFilteredRegions);
+      if(!result.err){
         yield  put({
           type:'queryregionSuccess',
-          payload:data
+          payload:result
         });
       }else{
         Modal.error({
            title: 'This is an error message',
-           content: 'Error',
+           content: 'QueryRegion Error ! \n' + "Error Message :" + result.msg.exception ,
          });
       }
 
     },
      *queryIsps({ payload }, { select, call, put }){
-       const data = yield call(queryIsp);
-       if(data){
+       const result = yield call(queryIsp);
+       if(!result.err){
          yield put({
            type: 'queryIspSuccess',
-           payload: data.data
+           payload: result.data
           });
        }else{
          Modal.error({
             title: 'This is an error message',
-            content: 'Error',
+            content: 'QueryIsp Error ! \n' + "Error Message :" + result.msg.exception ,
           });
        }
      },
      *queryDns({ payload }, { call, put }){
-       const data =  yield call(queryDns,{});
-       if (data) {
+       const result =  yield call(queryDns,{});
+       if (!result.err) {
          yield put({
            type: 'queryDnsSuccess',
-           payload: data
+           payload: result
          });
        }else{
          Modal.error({
             title: 'This is an error message',
-            content: 'Error',
+            content: 'QueryDns Error ! \n' + "Error Message :" + result.msg.exception ,
           });
        }
      },
      *delete({ payload }, { select, call, put }){
-      yield call(deleteLocationRecord,payload.record)
-      yield put({
-        type: 'query',
-       });
+      const result = yield call(deleteLocationRecord,payload.record);
+      if (!result.err) {
+        yield put({
+          type: 'query',
+         });
+      }else{
+        Modal.error({
+           title: 'This is an error message',
+           content: 'Delete Error ! \n' + "Error Message :" + result.msg.exception ,
+         });
+      }
      },
      *deleteDomain({ payload }, { select, call, put }){
-       yield call(deleteLocationRecord,payload.record)
-       yield put({
-         type: 'query',
-        });
+       const result = yield call(deleteLocationRecord,payload.record);
+       console.log(result);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'DeleteDomain Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
      },
      *deleteRecord({ payload }, { select, call, put }){
-       yield call(deleteRRecord,payload.record)
-       yield put({
-         type: 'query',
-        });
+       const result = yield call(deleteRRecord,payload.record);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'DeleteRecord Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
+
      },
      *create({ payload }, { call, put }) {
        yield put({ type: 'hideLocationRecordModal' });
-       yield call(add,payload);
-       //刷新表格
-       yield put({type:'query'});
+      const result = yield call(add,payload);
+      if (!result.err) {
+        yield put({
+          type: 'query',
+         });
+      }else{
+        Modal.error({
+           title: 'This is an error message',
+           content: 'Create Error ! \n' + "Error Message :"  + result.msg.exception ,
+         });
+      }
      },
      *createBatch({ payload }, { call, put }){
        yield put({ type: 'hideLocationRecordModal' });
-       yield call(addBatch,payload);
-       //刷新表格
-       yield put({type:'query'});
+       const result = yield call(addBatch,payload);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'CreateBatch Error ! \n' + "Error Message :"  + result.msg.exception,
+          });
+       }
      },
      *createRRecord({ payload }, { call, put }) {
        yield put({ type: 'hideRRecordModal' });
-       yield call(addRRecord,payload);
-       //刷新表格
-       yield put({type:'query'});
+       const result = yield call(addRRecord,payload);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'CreateRRecord Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
      },
      *createRRecordBatch({ payload }, { call, put }){
        yield put({ type: 'hideRRecordModal' });
-       yield call(addRRecordBatch,payload);
-       //刷新表格
-       yield put({type:'query'});
+       const result = yield call(addRRecordBatch,payload);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'CreateRRecordBatch Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
      },
      *modifyRRecord({ payload }, { call, put }){
        yield put({ type: 'hideRRecordModal' });
-       yield call(modifyRRecord,payload);
-       //刷新表格
-       yield put({type:'query'});
+       const result = yield call(modifyRRecord,payload);
+       if (!result.err) {
+         yield put({
+           type: 'query',
+          });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'ModifyRRecord Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
      },
      *syncDns({ payload }, { call, put }){
-       yield call(syncDnsDomain,payload);
-       yield put({
-         type:'hideDNSModal',
-       });
+       const result = yield call(syncDnsDomain,payload);
+       if (!result.err) {
+         yield put({
+           type:'hideDNSModal',
+         });
+       }else{
+         Modal.error({
+            title: 'This is an error message',
+            content: 'SyncDns Error ! \n' + "Error Message :" + result.msg.exception ,
+          });
+       }
      },
   },
 

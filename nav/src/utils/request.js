@@ -5,7 +5,6 @@ function parseJSON(response) {
 }
 
 function checkStatus(response) {
-  console.log(response);
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -26,6 +25,27 @@ export default function request(url, options) {
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
-    .then((data) => ({ data }))
-    .catch((err) => ({ err }));
+    .then((data) => {return { data }})
+    .catch(
+      (err) => {
+        var result = new Object();
+        if( err.response){
+          return err.response.json().then(
+            (msg)=>{
+              result.msg = msg ;
+              result.err = err ;
+              return result ;
+            }
+          );
+        }else{
+          var msg = new Object();
+          msg.exception = err;
+          result.msg = msg;
+          result.err = err ;
+          return result ;
+        }
+
+
+      }
+    );
 }

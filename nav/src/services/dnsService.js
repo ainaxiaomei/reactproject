@@ -12,7 +12,7 @@ export async function syncDns(data){
        request(url);
    }
 
-  return
+  return {};
 }
 
 export async function syncDnsDomain(data){
@@ -22,5 +22,5 @@ export async function syncDnsDomain(data){
        request(url);
    }
 
-  return
+  return {};
 }
