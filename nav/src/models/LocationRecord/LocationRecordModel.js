@@ -1,6 +1,6 @@
 import request from '../../utils/request';
 import {queryRegion} from '../../services/ipRangeService.js';
-import {add,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch,getFilteredRegions} from '../../services/locationRecordService.js';
+import {add,addWithRegion,queryLocationRecord,deleteLocationRecord,deleteRRecord,addRRecord,modifyRRecord,addRRecordBatch,addBatch,getFilteredRegions} from '../../services/locationRecordService.js';
 import {queryIsp} from '../../services/ispService.js';
 import {queryDns,syncDnsDomain} from '../../services/dnsService.js';
 import { Modal} from 'antd';
@@ -23,7 +23,36 @@ export default {
     locationRecordSelectedRows:[],
     modalType: 'create',
     isp:[],
-    regions:[],
+    regions:[{
+  value: 'AS',
+  label: '亚洲',
+  children: [{
+    value: 'CN',
+    label: '中国',
+    children: [{
+      value: 'SH',
+      label: '上海',
+    },{
+      value: {type:'region',value:'HD'},
+      label: '华东',
+    }],
+  }],
+},
+{
+  value: 'NA',
+  label: '北美洲',
+  children: [{
+    value: 'US',
+    label: '美国',
+    children: [{
+      value: 'HS',
+      label: '华盛顿洲',
+    }],
+  }],
+},{
+value: '',
+label: '默认',
+},],
     locationSearch:{
       continent:[],
       country:[],
@@ -50,11 +79,11 @@ export default {
             payload: {},
           });
 
-          //查询区域
-          dispatch({
-            type: 'queryRegions',
-            payload: {},
-          });
+          // //查询区域
+          // dispatch({
+          //   type: 'queryRegions',
+          //   payload: {},
+          // });
 
           //查询dns
           dispatch({
@@ -173,6 +202,20 @@ export default {
      *create({ payload }, { call, put }) {
        yield put({ type: 'hideLocationRecordModal' });
       const result = yield call(add,payload);
+      if (!result.err) {
+        yield put({
+          type: 'query',
+         });
+      }else{
+        Modal.error({
+           title: 'This is an error message',
+           content: 'Create Error ! \n' + "Error Message :"  + result.msg.exception ,
+         });
+      }
+     },
+     *createWithRegion({ payload }, { call, put }) {
+       yield put({ type: 'hideLocationRecordModal' });
+      const result = yield call(addWithRegion,payload);
       if (!result.err) {
         yield put({
           type: 'query',

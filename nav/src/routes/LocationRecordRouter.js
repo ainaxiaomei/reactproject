@@ -237,11 +237,24 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
           object.data = res[0];
           array.push(object);
         }
-        data = {...data,"continent":data.geo[0],"country":data.geo[1],"province":data.geo[2],ipList:array,ips:data.ipList }
-        dispatch({
-          type:'locationRecord/create',
-          payload:data
-        });
+        //过滤区域
+
+        if((data.geo[2]) && data.geo[2].type=="region"){
+          data = {...data,"continent":data.geo[0],"country":data.geo[1],ipList:array,ips:data.ipList }
+          dispatch({
+            type:'locationRecord/createWithRegion',
+            payload:{
+              data:data,
+              path:`addByArea/${data.geo[2].value}/province`
+            }
+          });
+        }else{
+          data = {...data,"continent":data.geo[0],"country":data.geo[1],"province":data.geo[2],ipList:array,ips:data.ipList }
+          dispatch({
+            type:'locationRecord/create',
+            payload:data
+          });
+        }
       }
 
     },
