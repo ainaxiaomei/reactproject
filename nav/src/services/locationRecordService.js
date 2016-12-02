@@ -38,6 +38,18 @@ export async function add(data){
   });
 }
 
+export async function addWithRegion(payload){
+  var json = JSON.stringify(payload.data);
+  return request('/location/record/'+ payload.path,
+   {
+    method: 'post',
+    body:json,
+    headers: {
+    'Content-Type': 'application/json',
+  },
+  });
+}
+
 export async function addBatch(data){
   console.log(data);
   var json = JSON.stringify(data);
