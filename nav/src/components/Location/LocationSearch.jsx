@@ -4,7 +4,12 @@ import {isIP} from '../../services/commomService.js'
 const FormItem = Form.Item;
 
 const usualShowedChildren = 1 * 3; // row * col
-const LocationSearch = Form.create()(React.createClass({
+const LocationSearch = Form.create({
+  onFieldsChange(props, changedFields) {
+    
+      props.onChange(props, changedFields);
+  },
+})(React.createClass({
   getInitialState() {
     return {
       expand: false,

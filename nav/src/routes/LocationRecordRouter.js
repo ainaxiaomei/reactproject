@@ -317,7 +317,31 @@ const LocationRecordRouter = ({locationRecord,dispatch})=>{
     },
     isps:isp,
     regions:regions,
-    ipListSearch:locationSearch
+    ipListSearch:locationSearch,
+    onChange:function(props, changedFields){
+      var fields = new Object();
+      for(let key in changedFields){
+        if(key == "isp"){
+          const obj = isp.filter((item)=>{
+            return item.code == changedFields[key].value;
+          });
+          if(obj && obj.length > 0){
+            fields[key] = obj[0].abbreviation;
+          }else{
+            fields[key] = undefined
+          }
+        }else{
+          fields[key] = changedFields[key].value;
+        }
+
+      }
+      dispatch({
+        type:'locationRecord/setLocationSerachData',
+        payload:{
+          data:fields
+        }
+      });
+    }
 
   }
 

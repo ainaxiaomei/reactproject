@@ -21,6 +21,7 @@ export default {
     locationRecordModalVisible:false,
     locationRecordListAcionMode:"",
     locationRecordSelectedRows:[],
+    locationSerachData:{},
     modalType: 'create',
     isp:[],
     regions:[{
@@ -101,7 +102,8 @@ label: '默认',
   effects:{
     *query({ payload }, { select, call, put }) {
        var currentPage =  yield select(state => state.locationRecord.current);
-       payload = {...payload,page:currentPage};
+       var locationSearchData =  yield select(state => state.locationRecord.locationSerachData);
+       payload = {...payload,page:currentPage,...locationSearchData};
        yield put({ type: 'showLoading' });
        //清空数据
        yield put({type: 'clearList'});
@@ -329,6 +331,9 @@ reducers:{
 
 
     return {...state,enableRRecordSelect:!state.enableRRecordSelect};
+  },
+  setLocationSerachData(state,action){
+    return {...state,locationSerachData:{...state.locationSerachData,...action.payload.data}};
   },
   querySuccess(state,action){
     /*
