@@ -36,6 +36,9 @@ export default {
       value: {type:'region',value:'HD'},
       label: '华东',
     }],
+  },{
+    value:"",
+    label:"默认"
   }],
 },
 {
@@ -95,9 +98,10 @@ label: '默认',
     },
   },
 
-
   effects:{
     *query({ payload }, { select, call, put }) {
+       var currentPage =  yield select(state => state.locationRecord.current);
+       payload = {...payload,page:currentPage};
        yield put({ type: 'showLoading' });
        //清空数据
        yield put({type: 'clearList'});
@@ -452,16 +456,25 @@ reducers:{
     if(!countryList){
       countryList=[];
     }
+    countryList = countryList.filter((item)=>{
+      return (item.value !='');
+    });
     return {...state,locationSearch:{...state.locationSearch,country:countryList,province:[]}};
   },
   changeProvince(state,action){
    const data =  state.locationSearch.country.filter((item)=>{
         return (item.value == action.payload);
     });
+
     var provinceList = data[0].children;
     if(!provinceList){
       provinceList=[];
     }
+
+    provinceList = provinceList.filter((item)=>{
+      return (item.value !='' && item.value.type != 'region');
+    });
+
      return {...state,locationSearch:{...state.locationSearch,province:provinceList}};
   },
   //显示新增对话框

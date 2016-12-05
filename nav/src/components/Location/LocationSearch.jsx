@@ -65,7 +65,9 @@ const LocationSearch = Form.create()(React.createClass({
 
     const contonentOptions = [];
     for (let i = 0; i < this.props.regions.length; i++) {
-    contonentOptions.push(<Option key={this.props.regions[i].value}>{this.props.regions[i].label}</Option>);
+      if(this.props.regions[i].value !=""){
+        contonentOptions.push(<Option key={this.props.regions[i].value}>{this.props.regions[i].label}</Option>);
+      }
     //console.log(isp[i].abbreviation);
     }
 
