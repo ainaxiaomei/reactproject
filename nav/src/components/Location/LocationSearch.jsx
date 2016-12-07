@@ -6,7 +6,7 @@ const FormItem = Form.Item;
 const usualShowedChildren = 1 * 3; // row * col
 const LocationSearch = Form.create({
   onFieldsChange(props, changedFields) {
-    
+
       props.onChange(props, changedFields);
   },
 })(React.createClass({

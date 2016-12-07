@@ -24,39 +24,7 @@ export default {
     locationSerachData:{},
     modalType: 'create',
     isp:[],
-    regions:[{
-  value: 'AS',
-  label: '亚洲',
-  children: [{
-    value: 'CN',
-    label: '中国',
-    children: [{
-      value: 'SH',
-      label: '上海',
-    },{
-      value: {type:'region',value:'HD'},
-      label: '华东',
-    }],
-  },{
-    value:"",
-    label:"默认"
-  }],
-},
-{
-  value: 'NA',
-  label: '北美洲',
-  children: [{
-    value: 'US',
-    label: '美国',
-    children: [{
-      value: 'HS',
-      label: '华盛顿洲',
-    }],
-  }],
-},{
-value: '',
-label: '默认',
-},],
+    regions:[],
     locationSearch:{
       continent:[],
       country:[],
@@ -83,11 +51,11 @@ label: '默认',
             payload: {},
           });
 
-          // //查询区域
-          // dispatch({
-          //   type: 'queryRegions',
-          //   payload: {},
-          // });
+          //查询区域
+          dispatch({
+            type: 'queryRegions',
+            payload: {},
+          });
 
           //查询dns
           dispatch({
@@ -451,6 +419,24 @@ reducers:{
      return {...state,isp:action.payload.data};
   },
   queryregionSuccess(state,action){
+    for(var reg of action.payload.data){
+      let countrys = reg.children;
+      if(countrys){
+        for(var con of countrys){
+          let provinces = con.children;
+          if(provinces){
+            for(let a of provinces){
+              if(a.value.type == 'region'){
+                console.log(1111);
+                 a.value.toString = ()=>{return "#" + a.value.value }
+              }
+            }
+          }
+        }
+      }
+    }
+
+     console.log(action.payload.data);
      return {...state,regions:action.payload.data};
   },
   changeCountry(state,action){
